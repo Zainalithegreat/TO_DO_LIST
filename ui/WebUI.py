@@ -6,7 +6,7 @@ import os
 import bcrypt
 
 class WebUI:
-    __app = Flask(__name__)
+    __app = Flask(__name__, template_folder='templates', static_folder='static')
 
     __app.config["SESSION_FILE_DIR"] = "/flask_session"
 
