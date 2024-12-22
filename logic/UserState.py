@@ -17,7 +17,7 @@ class UserState:
             del cls.__map[user_key]
 
     def get_key(self):
-        return self.__user.getKey()
+        return self.__user.get_user_key()
 
     @classmethod
     def lookup(cls, key):

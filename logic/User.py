@@ -2,31 +2,31 @@ from data.Database import Database
 
 class User:
     # __UserID = 0
-    __Username = ""
-    __Password = ""
+    __username = ""
+    __password = ""
 
 
-    def __init__(self, Username, Password=None):
-        self.__Username = Username
-        self.__Password = Password
+    def __init__(self, username, password=None):
+        self.__username = username
+        self.__password = password
 
-    def getUserID(self):
-        user_id = Database.get_user_id(self.__Username)
+    def get_user_id(self):
+        user_id = Database.get_user_id(self.__username)
         return user_id
 
-    def getUsername(self):
-        return self.__Username
+    def get_username(self):
+        return self.__username
 
-    def getPassword(self):
-        return self.__Password
+    def get_password(self):
+        return self.__password
 
-    def getName(self):
-        name = Database.get_name(self.__Username)
+    def get_name(self):
+        name = Database.get_name(self.__username)
         return name
 
-    def getEmail(self):
-        email = Database.get_email(self.__Username)
+    def get_email(self):
+        email = Database.get_email(self.__username)
         return email
 
-    def getKey(self):
-        return self.__Username.lower()
+    def get_user_key(self):
+        return self.__username.lower()

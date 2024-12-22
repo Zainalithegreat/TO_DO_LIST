@@ -53,3 +53,34 @@ class Database:
         # print("result: ", result)
         return result
 
+    @classmethod
+    def get_name(cls, username):
+        sql = """
+                       SELECT Name
+                       FROM   Users
+                       WHERE  Username = %s
+                       """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (username,))
+        result = cursor.fetchone()
+        print("result: ", result)
+        return result
+
+    @classmethod
+    def get_email(cls, username):
+        sql = """
+                       SELECT Email
+                       FROM   Users
+                       WHERE  Username = %s
+                       """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (username,))
+        result = cursor.fetchone()
+        print("result: ", result)
+        return result
+
+
+
+

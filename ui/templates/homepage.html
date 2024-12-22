@@ -1,0 +1,14 @@
+{% extends "default.html" %}
+{% block title %}
+    PCC Food Pantry
+{% endblock %}
+{% block header %}
+    Panther Pantry at PCC
+{% endblock %}
+{% block content %}
+    <p>Create an account to make a to-do list. </p>
+    <p>Already subscribed? Log in to review your to-do list.</p>
+<form method="GET" action="/login">
+    <button type="submit">Enter</button>
+</form>
+{% endblock %}
