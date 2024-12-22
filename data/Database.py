@@ -112,6 +112,76 @@ class Database:
         else:
             return None
 
+    @classmethod
+    def fetch_user_object(cls, user_id):
+        """
+        Method to fetch a user object from the database.
+        :param user_id: user_id, str
+        :return: user object, if valid credentials
+        """
+        from logic.User import User
+        sql = """
+                   SELECT UserID, Username, Password, Name, Email
+                   FROM Users
+                   WHERE UserID = %s;
+                 """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, user_id)
+        result = cursor.fetchone()
+
+        if result:
+            user = User(result[1], result[2])
+            user.set_userID(result[0])
+            user.set_name(result[3])
+            user.set_email(result[4])
+            return user
+        else:
+            return None
+
+    @classmethod
+    def add_user(cls, username, hashed_password, name, email):
+        """
+        Adds a new user into the Users table
+        :param username: str - Username for the new user
+        :param hashed_password: bytes - Hashed and salted password
+        :param name: str - Name of the user
+        :param email: str - Email of the user
+        :param role: str - Role of the user, default is 'Subscriber'
+        :return: True if registration is successful, False otherwise
+        """
+        sql = """
+            INSERT INTO Users (Username, Password, Name, Email)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+
+        # Create a cursor and execute the insert query
+        cursor = cls.get_cursor()
+
+        try:
+            # Execute the query
+            cursor.execute(sql, (username, hashed_password, name, email))
+
+            # Commit the changes to the database
+            cls.__connection.commit()
+
+            print("User created successfully.")
+
+            # Close connection and existing cursor
+            if cursor:
+                cursor.close()
+            cls.close_connection()
+            return True
+        except pymssql.DatabaseError as e:
+            # Print error message
+            # Close connection and existing cursor
+            if cursor:
+                cursor.close()
+            cls.close_connection()
+
+            # Rollback any changes and return false
+            cls.__connection.rollback()
+            return False
 
 
 

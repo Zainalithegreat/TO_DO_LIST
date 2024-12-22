@@ -47,3 +47,36 @@ class User:
     @staticmethod
     def fetch_user(user_or_email, password, is_email):
         from data.Database import Database
+
+    @staticmethod
+    def fetch_user_object(user_id):
+        from data.Database import Database
+
+        return Database.fetch_user_object(user_id)
+
+    @staticmethod
+    def add_user(username, hashed_password, name, email):
+        """
+        Calls the Database method to register a new user
+        :param username: str - Username for the new user
+        :param hashed_password: bytes - Hashed password for the new user
+        :param name: str - Name of the user
+        :param email: str - Email of the user
+        :return: True if registration is successful, False otherwise
+        """
+        return Database.add_user(username, hashed_password, name, email)
+
+    def set_userID(self, UserID):
+        self.__UserID = UserID
+
+    def set_username(self, Username):
+        self.__Username = Username
+
+    def set_password(self, Password):
+        self.__Password = Password
+
+    def set_name(self, Name):
+        self.__Name = Name
+
+    def set_email(self, email):
+        self.__Email = email
