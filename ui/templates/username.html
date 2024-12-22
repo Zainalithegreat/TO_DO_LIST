@@ -1,0 +1,25 @@
+{% extends "default.html" %}
+{% block title %}
+    Register
+{% endblock %}
+{% block header %}
+    <div class="header">Reset Password</div>
+{% endblock %}
+{% block content %}
+<form method="POST" action="/user_do_reset_password">
+            <table class="data_entry">
+                <tr>
+                    <th><label>Username:</label></th>
+                    <td>
+                        <input type="text" name="username"  required>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <button type="submit" name="type" value="Confirm">CONFIRM!</button>
+                    </th>
+                </tr>
+            </table>
+    </form>
+
+{% endblock %}
