@@ -1,18 +1,23 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
-from logic.UserState import UserState
+from sqlalchemy.orm.base import state_str
 
+from logic.User import User
+from logic.UserState import UserState
+import ui.routes
 import os
 import bcrypt
 
+
 class WebUI:
-    __app = Flask(__name__, template_folder='templates', static_folder='static')
+    __app = Flask(__name__)
 
     __app.config["SESSION_FILE_DIR"] = "/flask_session"
 
     ALLOWED_PATHS = [
         "/",
         "/login",
+        "/do_list",
         "/do_login",
         "/static/web_ui.css",
         "/register",
@@ -85,12 +90,15 @@ class WebUI:
     # render_template(file name): looks up a template in the templates folder
     # Example:
     def homepage():
+        if "user" in session:
+            return redirect((url_for("do_list")))
         return render_template("homepage.html")
 
     @classmethod
     def run(cls):
         # causes routes to be added to app object on run
         # pycharm says they are unused (greyed out), but it is incorrect, they are needed
+        from ui.routes.UserRoutes import UserRoutes
 
         if "APPDATA" in os.environ:
             path = os.environ["APPDATA"]
@@ -106,5 +114,5 @@ class WebUI:
         # constructs new session object which handles requests to the flask app
         Session(cls.__app)
         # paths may need to be adjusted, currently placeholders
-        cls.__app.run(host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
+        cls.__app.run(debug=True, host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
                                                               path + "/234A_CommitChaos/key.pem"))

@@ -1,0 +1,27 @@
+{% extends "default.html" %}
+{% block title %}
+    To_Do_List
+{% endblock %}
+{% block header %}
+    DL
+{% endblock %}
+{% block content %}
+ <div class="main-container">
+  <div class="container" id="container-1">
+      <h2>Start</h2>
+      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+      <button id="add-input-btn">Add Input</button>
+  </div>
+  <div class="container">
+      <h2>In Progress</h2>
+       <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+       <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+  </div>
+  <div class="container">
+      <h2>Complete</h2>
+      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
+  </div>
+</div>
+{% endblock %}

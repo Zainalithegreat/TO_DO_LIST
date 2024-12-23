@@ -6,15 +6,18 @@
     <title>{% block title %}Default Title{% endblock %}</title>
 </head>
 <body>
+<div class="user">
 {% if "user" in session %}
     <div class="top_login_button"> <a href="/logout">Logout</a></div>
-    <div class="top_login_name">User: {{ session["user"].getUsername() if "user" in session }}</div>
+    <div class="top_login_name">User: {{ session["user"].get_username() if "user" in session }}</div>
+     <script src="static/script.js" defer></script>
+</div>
 {% endif  %}
 {%  block content %}
 <p>Default Content</p>
 {% endblock %}
 {% block footer %}
-<hr class="footer">
+
 <div id="footer">
     <a href="/">234A_CommitChaos</a> covered under  <a href="https://creativecommons.org/licenses/by/4.0/deed.en">CC BY 4.0 DEED</a><br>
     Contact CommitChaos with questions.

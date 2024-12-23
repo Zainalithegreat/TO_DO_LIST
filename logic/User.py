@@ -1,3 +1,5 @@
+import bcrypt
+
 from data.Database import Database
 import re
 
@@ -45,8 +47,30 @@ class User:
         return bool(re.match(pattern, email))
 
     @staticmethod
+    def pass_validation(password):
+        """
+        Checks if the password is valid
+        :param password: str
+        :return: true if valid, false if not
+        """
+        length_check = len(password) >= 5
+        number_check = re.search(r'\d', password)
+        special_check = re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
+        return length_check and number_check and special_check
+
+    @staticmethod
+    def hash_password(password):
+        # Create a salt and hash the password
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+
+        return hashed_password
+
+    @staticmethod
     def fetch_user(user_or_email, password, is_email):
         from data.Database import Database
+
+        return Database.fetch_user(user_or_email, password, is_email)
 
     @staticmethod
     def fetch_user_object(user_id):
@@ -80,3 +104,5 @@ class User:
 
     def set_email(self, email):
         self.__Email = email
+
+

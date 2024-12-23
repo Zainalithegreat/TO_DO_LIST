@@ -1,4 +1,5 @@
 import pymssql
+import logging
 import bcrypt
 
 
@@ -12,8 +13,7 @@ class Database:
             try:
                 cls.__connection = pymssql.connect(
                     server="localhost",
-                    database="Do_List",
-                    trusted=True,
+                    database="List",
                 )
                 print(cls.__connection)
             except pymssql.DatabaseError as e:
@@ -91,14 +91,15 @@ class Database:
         :return: found user, if valid credentials
         """
         if is_email:
+
             sql = """
-                     SELECT  UserID, 1, Email, Password, Role
+                     SELECT  UserID, Email, Password
                      FROM Users
                      WHERE Email = %s;
                      """
         else:
             sql = """
-                     SELECT  UserID, Username, Email, Password, Role
+                     SELECT  UserID, Username, Email, Password
                      FROM Users
                      WHERE Username = %s;
                      """
@@ -111,6 +112,20 @@ class Database:
             return result[0]
         else:
             return None
+
+    @classmethod
+    def check_password(cls, stored_password, provided_password):
+        """
+        Method to check the stored password against provided password, and ensure
+        the stored password is in bytes
+        :param stored_password:
+        :param provided_password:
+        :return:
+        """
+        # Ensure stored password is in bytes, not string
+        if isinstance(stored_password, str):
+            stored_password = stored_password.encode('utf-8')
+            return True
 
     @classmethod
     def fetch_user_object(cls, user_id):
@@ -152,36 +167,50 @@ class Database:
         """
         sql = """
             INSERT INTO Users (Username, Password, Name, Email)
-            VALUES (%s, %s, %s, %s, %s)
-            """
+            VALUES (%s, %s, %s, %s)
+        """
 
-        # Create a cursor and execute the insert query
-        cursor = cls.get_cursor()
-
+        cursor = None
         try:
+            # Create a cursor and execute the insert query
+            cursor = cls.get_cursor()
+
             # Execute the query
             cursor.execute(sql, (username, hashed_password, name, email))
 
             # Commit the changes to the database
             cls.__connection.commit()
 
-            print("User created successfully.")
+            # Log success
+            logging.info(f"User '{username}' created successfully.")
 
-            # Close connection and existing cursor
-            if cursor:
-                cursor.close()
-            cls.close_connection()
             return True
         except pymssql.DatabaseError as e:
-            # Print error message
-            # Close connection and existing cursor
+            # Log the error
+            logging.error(f"Error adding user: {str(e)}")
+
+            # Rollback any changes in case of error
+            cls.__connection.rollback()
+
+            return False
+        finally:
+            # Ensure cursor and connection are closed
             if cursor:
                 cursor.close()
             cls.close_connection()
 
-            # Rollback any changes and return false
-            cls.__connection.rollback()
+    @classmethod
+    def check_user(cls, username, email):
+        sql = """
+                   SELECT * 
+                   FROM Users 
+                   WHERE Username = %s OR Email = %s
+               """
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (username, email))
+        if cursor.fetchone():  # If a record is found, return False
+            print("Username or email already exists.")
             return False
-
-
-
+        else:
+            print("No users")
+            return True
