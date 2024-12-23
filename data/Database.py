@@ -214,3 +214,20 @@ class Database:
         else:
             print("No users")
             return True
+
+    @classmethod
+    def save_message(cls, message_id, text, user_id, check):
+        try:
+            sql = """
+                INSERT INTO Messages (MessageID, Messages, UserID, `check`)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor = cls.get_cursor()
+            cursor.execute(sql, (message_id, text, user_id, check))
+            cls.__connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error saving message: {e}")
+            return False
+
+

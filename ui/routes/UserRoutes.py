@@ -1,5 +1,7 @@
+from numpy.lib.user_array import container
+
 from ui.WebUI import WebUI
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from ui.LoginUI import LoginUI
 from logic.User import User
 from data.Database import Database
@@ -155,3 +157,39 @@ class UserRoutes:
         if "user" not in session:
             return redirect((url_for("login")))
         return render_template("do_list.html")
+
+    @staticmethod
+    @__app.route('/save-message', methods=['POST'])
+    def save_message():
+        try:
+            check = 0
+            data = request.json
+            message_id = data.get("id")
+            text = data.get("text")
+            container_id = data.get("containerId")
+
+            print("message_id: ", message_id)
+            print("text: ", text)
+            print("container_id: ", container_id)
+
+            if not message_id or not text:
+                return jsonify({"error": "Invalid data"}), 400
+
+            if container_id is "container-1":
+                check = 1
+            if container_id is "container-2":
+                check = 2
+            if container_id is "container-3":
+                check = 3
+
+            print("check: ", check)
+            print(container_id)
+
+            success = Database.save_message(message_id, text, session["user"], check)
+
+            if success:
+                return jsonify({"message": "Saved successfully"}), 200
+            else:
+                return jsonify({"error": "Failed to save message"}), 500
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500

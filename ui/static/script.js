@@ -33,6 +33,57 @@ function create(){
   container.appendChild(input);
   draggable();
 }
+
+async function sendUpdate(containerId) {
+  // Select all textareas within the specified container
+  const container = document.getElementById(containerId);
+  const textareas = container.querySelectorAll('textarea');
+
+  textareas.forEach((textarea) => {
+    // Attach an 'input' event listener to each textarea
+    textarea.addEventListener(
+      'input',
+      debounce(async (e) => {
+        const newValue = e.target.value;
+        const id = e.target.value; // Use the unique identifier of the textarea
+
+        // Prepare data to send
+        const data = { id, text: newValue, containerId};
+
+
+        try {
+          // Send an asynchronous POST request
+          const response = await fetch('/save-message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save changes');
+          }
+          console.log('Changes saved successfully:', data);
+        } catch (error) {
+          console.error('Error saving changes:', error);
+        }
+      }, 500) // Debounce delay in milliseconds
+    );
+  });
+}
+
+// Debounce function to limit frequent saves
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+
+
 function resize() {
     const textareas = document.getElementsByClassName('resizableTextarea');
     Array.from(textareas).forEach(textarea => {
@@ -50,3 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
       resize()
       draggable();  // Call the draggable function
     });
+
+document.addEventListener("input", function(){
+    sendUpdate('container-1');
+    sendUpdate('container-2');
+    sendUpdate('container-3');
+});
