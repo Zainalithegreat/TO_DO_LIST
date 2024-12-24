@@ -1,5 +1,6 @@
 from numpy.lib.user_array import container
 from requests import Session
+import uuid
 
 from ui.WebUI import WebUI
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
@@ -135,7 +136,19 @@ class UserRoutes:
                 # Store the user information in the session
                 user = User.fetch_user_object(session.get('user_id'))
                 session['user'] = user  # Store user_id in the session
-                return render_template("do_list.html")
+
+                user_instance = User(session["user"].get_username())
+                user_id = user_instance.get_user_id()
+                container_one = Database.get_messages(user_id, 1)
+                container_two = Database.get_messages(user_id, 2)
+                container_three = Database.get_messages(user_id, 3)
+
+                return render_template(
+                    "do_list.html",
+                    container_one=container_one,
+                    container_two=container_two,
+                    container_three=container_three
+                )
         else:
             # If the code is incorrect, show an error
             return render_template("error.html", message_header="Invalid Code",
@@ -175,14 +188,16 @@ class UserRoutes:
     @__app.route('/save-message', methods=['POST'])
     def save_message():
         import time
-        time.sleep(3)  # Simulating delay for testing
+        time.sleep(1)  # Simulating delay for testing
 
         try:
             # Extract and validate incoming JSON data
             data = request.json
-            message_id = data.get("id")
+            message_id = data.get('id')
             text = data.get("text")
             container_id = data.get("containerId")
+            print("Messages", message_id)
+            time.sleep(1)
 
             if not message_id or not text or not container_id:
                 print("Missing fields:", data)  # Log missing fields
@@ -199,21 +214,19 @@ class UserRoutes:
                 return jsonify({"error": "Invalid container ID"}), 400
 
             print("Received data:", data)
+            time.sleep(1)
 
             # Fetch user ID from the session
             user_instance = User(session["user"].get_username())
             user_id = user_instance.get_user_id()
 
-            if not Database.check_message(user_id, text):
-                print("Message already exists")
-                return jsonify({"error": "Message already exists"}), 409
-
+            print("Message_id: ", message_id)
             if Database.check_message_box(user_id, message_id):
                 Database.update_message_box(text, message_id, user_id)
                 return jsonify({"message": "Saved successfully"}), 200
 
             # Save the message in the database
-            success = Database.save_message(text, user_id[0], check)
+            success = Database.save_message(text, user_id[0], check, message_id)
             if success:
                 print("Message saved successfully")
                 return jsonify({"message": "Saved successfully"}), 200
@@ -233,11 +246,10 @@ class UserRoutes:
         try:
             data = request.json
             container_id = data.get("new_container")
-            textarea_id = data.get("textarea_id")
+            message_id = data.get("textarea_id")
             check = 0
 
             print("containerID", container_id)
-            print("textarea_id", textarea_id)
 
             if container_id == "container-1":
                 check = 1
@@ -248,11 +260,11 @@ class UserRoutes:
 
             print("check: ", check)
 
-            message_id = int(textarea_id)
             print("message_id: ", message_id)
 
             user_instance = User(session["user"].get_username())
             user_id = user_instance.get_user_id()
+
             success = Database.update_message(message_id, check, user_id[0])
 
             if success:
@@ -267,12 +279,19 @@ class UserRoutes:
     def get_new_message_id():
         try:
             # Get the current maximum message ID from the database
-            new_message_id = Database.get_message_id() + 1  # Get the next ID
+            new_message_id = str(uuid.uuid4())
+            print("Message_ID", new_message_id)
 
             return jsonify({"newMessageId": new_message_id}), 200
         except Exception as e:
             print(f"Unexpected error: {e}")
             return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+    @staticmethod
+    @__app.route("/delete_message", methods=["POST"])
+    def delete_message():
+        pass
 
 
 

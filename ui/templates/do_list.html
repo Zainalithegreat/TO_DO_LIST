@@ -11,7 +11,10 @@
     <div class="container" id="container-1">
         <h2>Start</h2>
         {% for message in container_one %}
-            <textarea placeholder="message" class="draggable resizableInput" id="{{ message[1] }}" draggable="true">{{ message[0]  }}</textarea>
+            <div id="{{ message[1] }}" draggable="true" class="draggable resizableTextarea">
+                <textarea placeholder="Enter your message here..."  id="{{ message[1] }}">{{ message[0]  }}</textarea>
+                <button class="remove_button">Remove</button>
+            </div>
         {% endfor %}
         <button id="add-input-btn">Add Input</button>
     </div>
@@ -19,16 +22,22 @@
     <!-- Container 2: In Progress -->
     <div class="container" id="container-2">
         <h2>In Progress</h2>
-        {% for message in container_two %}
-            <textarea placeholder="message" class="draggable resizableInput" id= "{{ message[1] }}" draggable="true">{{ message[0] }}</textarea>
+         {% for message in container_two %}
+            <div id="{{ message[1] }}" draggable="true" class="draggable resizableTextarea">
+                <textarea placeholder="Enter your message here..."  id="{{ message[1] }}">{{ message[0]  }}</textarea>
+                <button class="remove_button">Remove</button>
+            </div>
         {% endfor %}
     </div>
 
     <!-- Container 3: Complete -->
     <div class="container" id="container-3">
         <h2>Complete</h2>
-        {% for message in container_three %}
-            <textarea placeholder="message" class="draggable resizableInput" id= "{{ message[1] }}"draggable="true">{{ message[0]  }}</textarea>
+         {% for message in container_three %}
+            <div id="{{ message[1] }}" draggable="true" class="draggable resizableTextarea">
+                <textarea placeholder="Enter your message here..."  id="{{ message[1] }}">{{ message[0]  }}</textarea>
+                <button class="remove_button">Remove</button>
+            </div>
         {% endfor %}
     </div>
 </div>

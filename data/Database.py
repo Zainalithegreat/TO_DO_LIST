@@ -16,7 +16,7 @@ class Database:
             try:
                 cls.__connection = pymssql.connect(
                     server="localhost",
-                    database="List",
+                    database="List"
                 )
                 print(cls.__connection)
             except pymssql.DatabaseError as e:
@@ -25,15 +25,13 @@ class Database:
 
     @classmethod
     def get_cursor(cls):
+        """
+        Class to create a cursor for executing queries
+        :return: cursor
+        """
         if cls.__connection is None:
-            logging.error("Database connection is not established.")
-            return None
-        try:
-            cursor = cls.__connection.cursor()
-            return cursor
-        except Exception as e:
-            logging.error(f"Failed to get cursor: {e}")
-            return None
+            cls.connect()
+        return cls.__connection.cursor()
 
     @classmethod
     def close_connection(cls):
@@ -47,30 +45,16 @@ class Database:
     @classmethod
     def get_user_id(cls, username):
         sql = """
-                SELECT UserID
-                FROM Users
-                WHERE Username = %s
-              """
-        try:
-            cursor = cls.get_cursor()
-            if cursor is None:
-                raise Exception("Cursor is None, cannot execute query")
+                      SELECT UserID
+                      FROM   Users
+                      WHERE  Username = %s
+                      """
 
-            print(f"Executing SQL: {sql} with parameters: {username}")
-            cursor.execute(sql, (username,))
-            result = cursor.fetchone()
-
-            if result is None:
-                print(f"No user found with username: {username}")
-                return None
-
-            return result[0]
-        except pymssql.OperationalError as e:
-            print(f"Database operational error: {e}")
-            return None
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return None
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (username,))
+        result = cursor.fetchone()
+        # print("result: ", result)
+        return result
 
     @classmethod
     def get_name(cls, username):
@@ -89,10 +73,10 @@ class Database:
     @classmethod
     def get_email(cls, username):
         sql = """
-                       SELECT Email
-                       FROM   Users
-                       WHERE  Username = %s
-                       """
+                      SELECT Email
+                      FROM   Users
+                      WHERE  Username = %s
+                      """
 
         cursor = cls.get_cursor()
         cursor.execute(sql, (username,))
@@ -110,22 +94,22 @@ class Database:
         :return: found user, if valid credentials
         """
         if is_email:
-
             sql = """
-                     SELECT  UserID, Email, Password
-                     FROM Users
-                     WHERE Email = %s;
-                     """
+                      SELECT  UserID, 1, Email, Password
+                      FROM Users
+                      WHERE Email = %s;
+                      """
         else:
             sql = """
-                     SELECT  UserID, Username, Email, Password
-                     FROM Users
-                     WHERE Username = %s;
-                     """
+                      SELECT  UserID, Username, Email, Password
+                      FROM Users
+                      WHERE Username = %s;
+                      """
 
         cursor = cls.get_cursor()
         cursor.execute(sql, (user_or_email,))
         result = cursor.fetchone()
+        print("result", result)
 
         if result and cls.check_password(result[3], password):
             return result[0]
@@ -134,17 +118,10 @@ class Database:
 
     @classmethod
     def check_password(cls, stored_password, provided_password):
-        """
-        Method to check the stored password against provided password, and ensure
-        the stored password is in bytes
-        :param stored_password:
-        :param provided_password:
-        :return:
-        """
-        # Ensure stored password is in bytes, not string
         if isinstance(stored_password, str):
             stored_password = stored_password.encode('utf-8')
-            return True
+        return bcrypt.checkpw(provided_password.encode('utf-8'), stored_password)
+
 
     @classmethod
     def fetch_user_object(cls, user_id):
@@ -236,23 +213,18 @@ class Database:
             return True
 
     @classmethod
-    def save_message(cls, text, user_id, checked):
+    def save_message(cls, text, user_id, checked, message_var):
         try:
-            # Validate parameter types
-
-            assert isinstance(text, str), "text must be a string"
-            assert isinstance(user_id, (str, int)), "user_id must be a string or integer"
-            assert isinstance(checked, int), "check must be an integer"
 
             # Updated SQL query (escape reserved keywords like `check`)
             sql = """
-                INSERT INTO Messages (Message, UserID, Checked)
-                VALUES (%s, %s, %s)
+                INSERT INTO Messages (Message, UserID, Checked, MessageVar)
+                VALUES (%s, %s, %s, %s)
             """
             print(f"Executing SQL Query: {sql}")
 
             cursor = cls.get_cursor()
-            cursor.execute(sql, (text, user_id, checked))
+            cursor.execute(sql, (text, user_id, checked, message_var))
             cls.__connection.commit()
             return True
         except Exception as e:
@@ -262,7 +234,7 @@ class Database:
     @classmethod
     def get_messages(cls, user_id, container):
         sql = """
-                              SELECT Message, MessageID
+                              SELECT Message, MessageVar
                               FROM   Messages
                               WHERE  UserID = %s AND Checked = %s
                               """
@@ -274,17 +246,17 @@ class Database:
         return result
 
     @classmethod
-    def update_message(cls, message_id, checked, user_id):
+    def update_message(cls, message_var, checked, user_id):
         sql = """
         UPDATE Messages
         SET Checked = %s
-        WHERE MessageID = %s AND UserID = %s
+        WHERE MessageVar = %s AND UserID = %s
         """
         cursor = cls.get_cursor()
         try:
             print("Executing SQL:", sql)
-            print("With parameters:", (checked, message_id, user_id))
-            cursor.execute(sql, (checked, message_id, user_id))
+            print("With parameters:", (checked, message_var, user_id))
+            cursor.execute(sql, (checked, message_var, user_id))
             cls.__connection.commit()
             print("Message updated successfully")
         except Exception as e:
@@ -320,21 +292,24 @@ class Database:
         cursor = cls.get_cursor()  # Assuming you have a method to get a database cursor
         cursor.execute(sql)
         result = cursor.fetchone()
+        print("The ID is", result)
 
         # If result is None (i.e., no rows in the table), return 0
         if result and result[0] is not None:
             return result[0]  # Extract the value of the first column
-        return 0  # Return 0 if no rows found
+        else:
+            result = 0
+            return result # Return 0 if no rows found
 
     @classmethod
-    def check_message_box(cls, user_id, message_id):
+    def check_message_box(cls, user_id, message_var):
         sql = """
                                   SELECT * 
                                   FROM Messages 
-                                  WHERE UserID = %s AND MessageID = %s
+                                  WHERE UserID = %s AND MessageVar = %s
                               """
         cursor = cls.get_cursor()
-        cursor.execute(sql, (user_id, message_id))
+        cursor.execute(sql, (user_id, message_var))
         result = cursor.fetchall()
         if result:
             return True
@@ -342,14 +317,14 @@ class Database:
             return False
 
     @classmethod
-    def update_message_box(cls, message, message_id, user_id,):
+    def update_message_box(cls, message, message_var, user_id,):
         sql = """
                UPDATE Messages
                SET Message = %s
-               WHERE MessageID = %s AND UserID = %s
+               WHERE MessageVar = %s AND UserID = %s
                """
         cursor = cls.get_cursor()
-        cursor.execute(sql, (message, message_id, user_id))
+        cursor.execute(sql, (message, message_var, user_id))
         cls.__connection.commit()
         print("Updated correctly")
 
