@@ -15,6 +15,7 @@ class User:
 
     def get_user_id(self):
         user_id = Database.get_user_id(self.__username)
+        print("Hello World")
         return user_id
 
     def get_username(self):
@@ -104,5 +105,6 @@ class User:
 
     def set_email(self, email):
         self.__Email = email
+
 
 

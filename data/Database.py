@@ -2,6 +2,9 @@ import pymssql
 import logging
 import bcrypt
 
+# Set up logging configuration (this could be set up elsewhere in your application)
+logging.basicConfig(level=logging.INFO)
+
 
 class Database:
     __connection = None
@@ -22,13 +25,15 @@ class Database:
 
     @classmethod
     def get_cursor(cls):
-        """
-        Class to create a cursor for executing queries
-        :return: cursor
-        """
         if cls.__connection is None:
-            cls.connect()
-        return cls.__connection.cursor()
+            logging.error("Database connection is not established.")
+            return None
+        try:
+            cursor = cls.__connection.cursor()
+            return cursor
+        except Exception as e:
+            logging.error(f"Failed to get cursor: {e}")
+            return None
 
     @classmethod
     def close_connection(cls):
@@ -42,16 +47,30 @@ class Database:
     @classmethod
     def get_user_id(cls, username):
         sql = """
-                       SELECT UserID
-                       FROM   Users
-                       WHERE  Username = %s
-                       """
+                SELECT UserID
+                FROM Users
+                WHERE Username = %s
+              """
+        try:
+            cursor = cls.get_cursor()
+            if cursor is None:
+                raise Exception("Cursor is None, cannot execute query")
 
-        cursor = cls.get_cursor()
-        cursor.execute(sql, (username,))
-        result = cursor.fetchone()
-        # print("result: ", result)
-        return result
+            print(f"Executing SQL: {sql} with parameters: {username}")
+            cursor.execute(sql, (username,))
+            result = cursor.fetchone()
+
+            if result is None:
+                print(f"No user found with username: {username}")
+                return None
+
+            return result[0]
+        except pymssql.OperationalError as e:
+            print(f"Database operational error: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return None
 
     @classmethod
     def get_name(cls, username):
@@ -208,6 +227,7 @@ class Database:
                """
         cursor = cls.get_cursor()
         cursor.execute(sql, (username, email))
+        print("WE get here so something wrong in userid")
         if cursor.fetchone():  # If a record is found, return False
             print("Username or email already exists.")
             return False
@@ -216,18 +236,120 @@ class Database:
             return True
 
     @classmethod
-    def save_message(cls, message_id, text, user_id, check):
+    def save_message(cls, text, user_id, checked):
         try:
+            # Validate parameter types
+
+            assert isinstance(text, str), "text must be a string"
+            assert isinstance(user_id, (str, int)), "user_id must be a string or integer"
+            assert isinstance(checked, int), "check must be an integer"
+
+            # Updated SQL query (escape reserved keywords like `check`)
             sql = """
-                INSERT INTO Messages (MessageID, Messages, UserID, `check`)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO Messages (Message, UserID, Checked)
+                VALUES (%s, %s, %s)
             """
+            print(f"Executing SQL Query: {sql}")
+
             cursor = cls.get_cursor()
-            cursor.execute(sql, (message_id, text, user_id, check))
+            cursor.execute(sql, (text, user_id, checked))
             cls.__connection.commit()
             return True
         except Exception as e:
             print(f"Error saving message: {e}")
             return False
 
+    @classmethod
+    def get_messages(cls, user_id, container):
+        sql = """
+                              SELECT Message, MessageID
+                              FROM   Messages
+                              WHERE  UserID = %s AND Checked = %s
+                              """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (user_id, container))
+        result = cursor.fetchall()
+        print("result: ", result)
+        return result
+
+    @classmethod
+    def update_message(cls, message_id, checked, user_id):
+        sql = """
+        UPDATE Messages
+        SET Checked = %s
+        WHERE MessageID = %s AND UserID = %s
+        """
+        cursor = cls.get_cursor()
+        try:
+            print("Executing SQL:", sql)
+            print("With parameters:", (checked, message_id, user_id))
+            cursor.execute(sql, (checked, message_id, user_id))
+            cls.__connection.commit()
+            print("Message updated successfully")
+        except Exception as e:
+            print(f"Error executing SQL: {e}")
+            cls.__connection.rollback()
+        finally:
+            if cursor:
+                cursor.close()
+            cls.close_connection()
+
+    @classmethod
+    def check_message(cls, user_id, message):
+        sql = """
+                          SELECT * 
+                          FROM Messages 
+                          WHERE UserID = %s AND Message = %s
+                      """
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (user_id, message))
+        result = cursor.fetchall()
+        if result:  # If a record is found, return False
+            print("A message is found with that user")
+            return False
+        else:
+            print("No message")
+            return True
+
+    @classmethod
+    def get_message_id(cls):
+        sql = """
+            SELECT MAX(MessageID) FROM Messages;
+        """
+        cursor = cls.get_cursor()  # Assuming you have a method to get a database cursor
+        cursor.execute(sql)
+        result = cursor.fetchone()
+
+        # If result is None (i.e., no rows in the table), return 0
+        if result and result[0] is not None:
+            return result[0]  # Extract the value of the first column
+        return 0  # Return 0 if no rows found
+
+    @classmethod
+    def check_message_box(cls, user_id, message_id):
+        sql = """
+                                  SELECT * 
+                                  FROM Messages 
+                                  WHERE UserID = %s AND MessageID = %s
+                              """
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (user_id, message_id))
+        result = cursor.fetchall()
+        if result:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def update_message_box(cls, message, message_id, user_id,):
+        sql = """
+               UPDATE Messages
+               SET Message = %s
+               WHERE MessageID = %s AND UserID = %s
+               """
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (message, message_id, user_id))
+        cls.__connection.commit()
+        print("Updated correctly")
 

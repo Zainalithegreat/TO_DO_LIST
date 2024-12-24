@@ -6,22 +6,30 @@
     DL
 {% endblock %}
 {% block content %}
- <div class="main-container">
-  <div class="container" id="container-1">
-      <h2>Start</h2>
-      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-      <button id="add-input-btn">Add Input</button>
-  </div>
-  <div class="container" id="container-2">
-      <h2>In Progress</h2>
-       <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-       <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-  </div>
-  <div class="container" id="container-3">
-      <h2>Complete</h2>
-      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-      <textarea placeholder="message" class="draggable resizableInput" draggable="true"></textarea>
-  </div>
+<div class="main-container">
+    <!-- Container 1: Start -->
+    <div class="container" id="container-1">
+        <h2>Start</h2>
+        {% for message in container_one %}
+            <textarea placeholder="message" class="draggable resizableInput" id="{{ message[1] }}" draggable="true">{{ message[0]  }}</textarea>
+        {% endfor %}
+        <button id="add-input-btn">Add Input</button>
+    </div>
+
+    <!-- Container 2: In Progress -->
+    <div class="container" id="container-2">
+        <h2>In Progress</h2>
+        {% for message in container_two %}
+            <textarea placeholder="message" class="draggable resizableInput" id= "{{ message[1] }}" draggable="true">{{ message[0] }}</textarea>
+        {% endfor %}
+    </div>
+
+    <!-- Container 3: Complete -->
+    <div class="container" id="container-3">
+        <h2>Complete</h2>
+        {% for message in container_three %}
+            <textarea placeholder="message" class="draggable resizableInput" id= "{{ message[1] }}"draggable="true">{{ message[0]  }}</textarea>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

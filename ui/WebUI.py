@@ -18,6 +18,8 @@ class WebUI:
         "/",
         "/login",
         "/do_list",
+        "/before_list",
+        "/update-message",
         "/do_login",
         "/static/web_ui.css",
         "/register",
@@ -52,6 +54,8 @@ class WebUI:
         # Create new user state is user_state is none
         if user_state is None:
             UserState(WebUI.get_user())
+
+
 
     @classmethod
     def get_user_key(cls):
