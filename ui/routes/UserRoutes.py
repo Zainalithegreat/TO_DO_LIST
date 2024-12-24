@@ -3,12 +3,14 @@ from requests import Session
 import uuid
 
 from ui.WebUI import WebUI
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, flash
 from ui.LoginUI import LoginUI
 from logic.User import User
 from data.Database import Database
 import time
 
+TIME_LIMIT = 600
+TIME_MINUTES = TIME_LIMIT / 60
 
 class UserRoutes:
     # Retrieve the app instance from WebUI
@@ -53,7 +55,9 @@ class UserRoutes:
                 error_message=error_message
             )
 
-        return render_template("confirmation.html")
+        session["time"] = time.time()
+
+        return render_template("confirmation.html", time=TIME_MINUTES)
 
     @staticmethod
     @__app.route("/register")
@@ -92,67 +96,177 @@ class UserRoutes:
                 username=username,
                 email=email,
             )
-
+        session["time"] = time.time()
         # After sending the email and generating the code, render the confirmation page
-        return render_template("confirmation.html")
+        return render_template("confirmation.html", time=TIME_MINUTES)
+
+    @staticmethod
+    @__app.route("/reset_password")
+    def reset_password():
+        if "user" in session:
+            return redirect((url_for("do_list")))
+        return render_template("username.html")
+
+    @staticmethod
+    @__app.route("/user_do_reset_password", methods=["POST"])
+    def user_do_reset_password():
+        from ui.RegisterUI import RegisterUI
+        if "user" in session:
+            return redirect((url_for("do_list")))
+
+        session["action"] = "reset"
+
+        user_input = request.form.get("username")
+        email = User.email_validation(user_input)
+        if email:  # Input is an email
+            user_id = User.get_userid_email(user_input)
+
+            user_email = user_input
+            session["reset_email"] = user_email
+            user_id = user_id[0][0]
+            session["user_id"] = user_id
+        else:
+            user_instance = User(user_input)
+            user_id = user_instance.get_user_id()
+            user_email = user_instance.get_email()
+            session["reset_email"] = user_email
+            session["user_id"] = user_id
+
+        register_instance = RegisterUI()
+        register_instance.send_confirmation_code(user_id, user_email)
+
+        session["time"] = time.time()
+        return render_template("confirmation.html", time=TIME_MINUTES)
+
+    @staticmethod
+    @__app.route("/do_reset_password", methods=["POST"])
+    def do_reset_password():
+
+        if "user" in session:
+            return redirect((url_for("do_list")))
+
+        # Get form data
+        password = request.form.get("password")
+        confirm_password = request.form.get("password_confirm")
+
+        # Check for missing fields
+        if not password or not confirm_password:
+            flash("Both password fields are required.", "error")
+            return redirect(url_for('do_reset_password'))
+
+        # Password validation
+        if not User.pass_validation(password):
+            return render_template( "reset_password.html",
+                error="Password must be at least 5 characters long, contain a number, and a special character.",
+            )
+
+        # Check if passwords match
+        if password != confirm_password:
+            return render_template("reset_password.html",
+                                   error="Passwords do not match.")
+
+        # Get user ID from session
+        user_id = session.get("user_id")
+        if not user_id:
+            return render_template("reset_password.html",
+                                   error="Session expired or invalid user ID. Please try again.")
+
+        # Hash the password and update it
+        hashed_password = User.hash_password(password)
+        User.update_password(hashed_password, user_id)
+
+        return redirect(url_for('login'))
+
 
     @staticmethod
     @__app.route("/do_confirmation", methods=["POST"])
     def do_confirmation():
         if "user" in session:
-            return redirect((url_for("do_list")))
+            return redirect(url_for("do_list"))
 
         user_code = request.form.get("confirmation_code")
+        confirmation_code = session.get('confirmation_code')
+        # Timestamp when the code was created
+        code_generation_time = session.get('time')
+        time_left = time.time() - code_generation_time
+        remaining_time = TIME_LIMIT - time_left
 
-        # Check if the entered code matches the one in the session
-        if user_code and int(user_code) == session.get('confirmation_code'):
-            if session.get('action') == 'register':
-                # Proceed with final registration
-                name = session.get('name')
-                username = session.get('username')
-                email = session.get('email')
-                password = session.get('password')
+        print("Remain", remaining_time)
 
-                # Check if the user already exists in the database
-                if Database.check_user(username, email):
-                    # Add the user to the database
-                    User.add_user(username, password, name, email)
+        if remaining_time <= 0:
+            return render_template(
+                "error.html",
+                message_header="Session Expired",
+                message_body="Session expired. Please request a new confirmation code.",
+                logreg='login'
+            )
 
-                    # Clear the session after successful registration
-                    session.clear()
+        # Check if the time limit has been exceeded
 
+        if remaining_time <= 0:
+            return render_template(
+                "error.html",
+                message_header="Time is up",
+                message_body=f"Your time is up. Please go back to login.",
+                logreg='login'
+            )
 
-                    # Redirect to login page after successful registration
-                    return redirect(url_for('login'))
-                else:
-                    return render_template("error.html", message_header="Registration Error",
-                                           message_body="Username or Email already exists.")
-            # elif session.get("action") == "reset":
-            #     return render_template("user/reset_password.html")
-            else:
-                session.pop('confirmation_code', None)
-                session.pop('action', None)
-
-                # Store the user information in the session
-                user = User.fetch_user_object(session.get('user_id'))
-                session['user'] = user  # Store user_id in the session
-
-                user_instance = User(session["user"].get_username())
-                user_id = user_instance.get_user_id()
-                container_one = Database.get_messages(user_id, 1)
-                container_two = Database.get_messages(user_id, 2)
-                container_three = Database.get_messages(user_id, 3)
-
+        # Validate the entered code
+        try:
+            if int(user_code) != confirmation_code:
                 return render_template(
-                    "do_list.html",
-                    container_one=container_one,
-                    container_two=container_two,
-                    container_three=container_three
+                    "confirmation.html",
+                    error="The code you entered is incorrect. Please try again."
                 )
+        except ValueError:
+            return render_template(
+                "confirmation.html",
+                error="Invalid input. Please enter a valid integer."
+            )
+
+        # Code is valid; proceed with the action
+        if session.get('action') == 'register':
+            name = session.get('name')
+            username = session.get('username')
+            email = session.get('email')
+            password = session.get('password')
+
+            # Check if the user already exists in the database
+            if Database.check_user(username, email):
+                User.add_user(username, password, name, email)
+
+                # Clear session after successful registration
+                session.clear()
+                return redirect(url_for('login'))
+            else:
+                return render_template(
+                    "error.html",
+                    message_header="Registration Error",
+                    message_body="Username or Email already exists.",
+                    logreg="login"
+                )
+        elif session.get("action") == "reset":
+            return render_template("reset_password.html")
         else:
-            # If the code is incorrect, show an error
-            return render_template("error.html", message_header="Invalid Code",
-                                   message_body="The code you entered is incorrect. Please try again.")
+            session.pop('confirmation_code', None)
+            session.pop('action', None)
+
+            # Load user and their data
+            user = User.fetch_user_object(session.get('user_id'))
+            session['user'] = user
+
+            user_instance = User(session["user"].get_username())
+            user_id = user_instance.get_user_id()
+            container_one = Database.get_messages(user_id, 1)
+            container_two = Database.get_messages(user_id, 2)
+            container_three = Database.get_messages(user_id, 3)
+
+            return render_template(
+                "do_list.html",
+                container_one=container_one,
+                container_two=container_two,
+                container_three=container_three
+            )
 
     @staticmethod
     @__app.route("/logout")
@@ -319,19 +433,4 @@ class UserRoutes:
             # Catch and log unexpected errors
             print("Error during message deletion:", str(e))
             return jsonify({"error": "Internal server error"}), 500
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

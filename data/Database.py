@@ -341,3 +341,36 @@ class Database:
         print("Message Deleted")
         return True
 
+    @classmethod
+    def get_userid_email(cls, email):
+        sql = """
+                        SELECT UserID
+                        FROM Users 
+                        WHERE Email = %s
+                    """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (email,))
+        result = cursor.fetchall()
+        return result
+
+    @classmethod
+    def update_password(cls, hashed_password, user_id):
+        """
+        Updates the password of the user
+        :param hashed_password: bytes - Hashed and salted password
+        """
+        sql = """
+            UPDATE Users
+            SET Password = %s
+            WHERE UserID = %s
+            """
+        cursor = cls.get_cursor()
+
+        cursor.execute(sql, (hashed_password, user_id))
+        cls.__connection.commit()
+        if cursor:
+            cursor.close()
+        cls.close_connection()
+        print("Password updated")
+

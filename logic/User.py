@@ -106,5 +106,21 @@ class User:
     def set_email(self, email):
         self.__Email = email
 
+    @staticmethod
+    def get_userid_email(email):
+        from data.Database import Database
+
+        return Database.get_userid_email(email)
+
+    @staticmethod
+    def update_password(hashed_password, user_id):
+        """
+        Updates a user's password in the database. Only reached after login and confirmation code
+        """
+        print(user_id)
+        from data.Database import Database
+
+        return Database.update_password(hashed_password, user_id)
+
 
 
