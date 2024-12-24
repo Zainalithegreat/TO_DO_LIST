@@ -1,0 +1,50 @@
+{% extends "default.html" %}
+{% block title %}
+    Login
+{% endblock %}
+{% block header %}
+    <div class="header">Panther Pantry Login</div>
+{% endblock %}
+{% block content %}
+    <div class="content">
+        <p>Please enter the information for your account below</p>
+        {% if error_message %}
+            <div class="error">{{ error_message }}</div>
+        {% endif %}
+        <form method="POST" action="/do_login">
+            <table class="data_entry">
+                <tr>
+                    <th><label>Username:</label></th>
+                    <td>
+                        <input type="text" name="username" value="{{ username or '' }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Password:</label></th>
+                    <td>
+                        <input type="password" name="password">
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <button type="submit" name="type" value="login">LOGIN</button>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <a href="/register">
+                            <button type="button">REGISTER</button>
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <a href="/reset_password">
+                            <button type="button">Reset Password</button>
+                        </a>
+                    </th>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}

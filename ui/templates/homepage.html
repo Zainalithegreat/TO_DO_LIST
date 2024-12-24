@@ -1,0 +1,14 @@
+{% extends "default.html" %}
+{% block title %}
+    To_Do_List
+{% endblock %}
+{% block header %}
+    DL
+{% endblock %}
+{% block content %}
+    <p>Create an account to make a do list. </p>
+    <p>Already subscribed? Log in to change your do list.</p>
+<form method="GET" action="/login">
+    <button type="submit">Enter</button>
+</form>
+{% endblock %}

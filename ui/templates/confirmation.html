@@ -1,0 +1,28 @@
+{% extends "default.html" %}
+
+{% block title %}
+    Confirmation
+{% endblock %}
+
+{% block header %}
+    <div class="header">Please enter the confirmation code sent to your email:</div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <form method="POST" action="/do_confirmation">
+            <table class="data_entry">
+                <tr>
+                    <th><label for="confirmation_code">Confirmation Code:</label></th>
+                    <td><input type="text" name="confirmation_code" id="confirmation_code" required></td>
+                </tr>
+                <tr>
+                    <th colspan="2"><button type="submit" name="type" value="confirm">Submit</button></th>
+                </tr>
+                <tr>
+                    <th colspan="2"><a href="/login"><button type="button">Back to Login</button></a></th>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}

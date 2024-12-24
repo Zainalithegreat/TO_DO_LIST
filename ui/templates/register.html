@@ -1,0 +1,63 @@
+{% extends "default.html" %}
+{% block title %}
+    Register
+{% endblock %}
+{% block header %}
+    <div class="header">Please enter the info for your account below</div>
+{% endblock %}
+{% block content %}
+    <div class="content">
+        <form method="POST" action="/do_register">
+            <table class="data_entry">
+                <tr>
+                    <th><label>Full Name:</label></th>
+                    <td>
+                        <input type="text" name="name" value="{{ name or '' }}">
+                        {% if error_field == "name" %}
+                            <div class="error">{{ error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Username:</label></th>
+                    <td>
+                        <input type="text" name="username" value="{{ username or '' }}">
+                        {% if error_field == "username" %}
+                            <div class="error">{{ error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Email:</label></th>
+                    <td>
+                        <input type="email" name="email" value="{{ email or '' }}">
+                        {% if error_field == "email" %}
+                            <div class="error">{{ error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Password:</label></th>
+                    <td>
+                        <input type="password" name="password">
+                        {% if error_field == "password" %}
+                            <div class="error">{{ error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>Confirm Password:</label></th>
+                    <td>
+                        <input type="password" name="password_confirm">
+                        {% if error_field == "password_confirm" %}
+                            <div class="error">{{ error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2"><button type="submit" name="type" value="register">REGISTER</button></th>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}

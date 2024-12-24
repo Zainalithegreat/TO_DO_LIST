@@ -1,0 +1,7 @@
+{% extends "default.html" %}
+{% block title %}Error!{% endblock %}
+{% block header %}{{ message_header }}{% endblock %}
+{% block content %}
+    <p>{{ message_body }}</p>
+    <th colspan="2"><a href="/login"><button type="button">Back to login</button></a></th>
+{% endblock %}
