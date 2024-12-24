@@ -70,7 +70,8 @@ async function createNewTextarea() {
     div.className = 'draggable resizableTextarea';
     div.draggable = true
 
-    button.className = 'remove_button';
+    button.textContent = 'Remove';
+    button.className= 'remove_button';
 
     div.appendChild(textarea)
     div.appendChild(button)
@@ -86,6 +87,7 @@ async function createNewTextarea() {
 
     // Initialize drag-and-drop for the new textarea
     initializeDragAndDrop();
+    deleting();
   } catch (error) {
     console.error('Error creating new textarea:', error);
   }
@@ -110,6 +112,48 @@ async function updateContainer(textareaId, newContainerId) {
     console.error('Error updating container:', error);
   }
 }
+
+async function remove_button(event) {
+  const button = event.target; // Get the clicked button
+  const parentDiv = button.parentNode; // Get the parent <div> of the button
+  const id = parentDiv.id; // Get the ID of the parent <div>
+  const data = { id }; // Prepare data for the request
+
+  try {
+    const response = await fetch('/delete_message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log('Error data:', errorData); // Log the error response
+
+      if (errorData.error === "Message did not delete") {
+        console.log("Message not deleting");
+        button.remove(); // Remove the button element if deletion failed
+      } else {
+        throw new Error('Failed to delete message');
+      }
+    } else {
+      console.log('Message deleted successfully:', data);
+      parentDiv.remove(); // Remove the parent <div>, including the textarea and button
+      console.log('Div removed:', parentDiv.id);
+    }
+  } catch (error) {
+    console.error('Error deleting message:', error);
+  }
+}
+
+// Add event listener to all buttons with class 'remove_button'
+function deleting()
+{
+    document.querySelectorAll('.remove_button').forEach(button => {
+      button.addEventListener('click', remove_button);
+    });
+}
+
 
 
 document.addEventListener('input', debounce(async (e) => {
@@ -162,4 +206,5 @@ document.addEventListener('DOMContentLoaded', () => {
   addInputButton.addEventListener('click', createNewTextarea);
 
   initializeDragAndDrop(); // Set up drag-and-drop functionality
+  deleting();
 });

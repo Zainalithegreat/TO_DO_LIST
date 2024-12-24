@@ -287,11 +287,43 @@ class UserRoutes:
             print(f"Unexpected error: {e}")
             return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+    from flask import request, jsonify
 
     @staticmethod
     @__app.route("/delete_message", methods=["POST"])
     def delete_message():
-        pass
+        try:
+            # Parse the incoming JSON request
+            data = request.json
+            id = data.get("id")
+
+            # Debugging: Print the ID to the console
+            print("Id:", id)
+
+            # Validate that the ID is provided
+            if not id:
+                return jsonify({"error": "Message ID is required"}), 400
+
+            # Perform the deletion using the Database helper
+            success = Database.delete_message(id)
+
+            # Check if deletion was successful
+            if success:
+                print("success")
+                return jsonify({"message": "Message deleted successfully"}), 200
+            else:
+                print("unsuccess")
+                return jsonify({"error": "Message did not delete"}), 500
+
+        except Exception as e:
+            # Catch and log unexpected errors
+            print("Error during message deletion:", str(e))
+            return jsonify({"error": "Internal server error"}), 500
+
+
+
+
+
 
 
 

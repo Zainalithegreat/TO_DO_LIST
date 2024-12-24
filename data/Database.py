@@ -328,3 +328,16 @@ class Database:
         cls.__connection.commit()
         print("Updated correctly")
 
+    @classmethod
+    def delete_message(cls, message_id):
+        sql = """
+                                  DELETE
+                                  FROM Messages 
+                                  WHERE MessageVar = %s
+                              """
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (message_id, ))
+        cls.__connection.commit()
+        print("Message Deleted")
+        return True
+
