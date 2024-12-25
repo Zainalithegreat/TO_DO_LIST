@@ -24,7 +24,15 @@ class WebUI:
         "/static/web_ui.css",
         "/register",
         "/do_register",
-        "/do_confirmation"
+        "/username",
+        "/user_do_reset_password",
+        "/do_reset_password",
+        "/reset_password",
+        "/do_confirmation",
+        "/save-message",
+        "/get-new-message-id",
+        "/delete_message"
+
     ]
 
     @classmethod

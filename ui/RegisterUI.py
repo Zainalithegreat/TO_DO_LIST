@@ -56,3 +56,5 @@ class RegisterUI:
         session['username'] = username
         session['email'] = email
         session['password'] = hashed_password
+
+
