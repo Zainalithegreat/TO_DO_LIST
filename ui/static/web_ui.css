@@ -44,7 +44,7 @@ header {
 .main-container {
     display: flex;
     justify-content: space-around;
-    padding: 2rem;
+    padding: 20px;
     flex-grow: 1;
 }
 
@@ -168,6 +168,13 @@ footer a:hover {
     margin: 0;
     margin-left: 120px; /* Adjust this value to control the distance */
     display: inline-block; /* Ensures the buttons stay in line */
+}
+
+.to_do_list{
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #007BFF;
 }
 
 

@@ -1,3 +1,5 @@
+import json
+
 import pymssql
 import logging
 import bcrypt
@@ -14,9 +16,14 @@ class Database:
         # the connection variables
         if cls.__connection is None:
             try:
+                with open("db_config.json", "r") as config_file:
+                    config = json.load(config_file)
+
                 cls.__connection = pymssql.connect(
-                    server="localhost",
-                    database="List"
+                    server=config["server"],
+                    database=config["database"],
+                    user=config["user"],
+                    password=config["password"]
                 )
                 print(cls.__connection)
             except pymssql.DatabaseError as e:

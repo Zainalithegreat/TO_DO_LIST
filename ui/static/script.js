@@ -1,6 +1,5 @@
 let timeout;
 
-// Utility: Debounce function
 function debounce(func, delay) {
   let timer;
   return (...args) => {
@@ -10,7 +9,6 @@ function debounce(func, delay) {
 }
 
 function initializeDragAndDrop() {
-  // Prevent duplicate event listeners by marking initialized elements
   const containers = document.querySelectorAll('.container:not(.initialized)');
   containers.forEach((container) => {
     container.classList.add('initialized');
@@ -31,7 +29,6 @@ function initializeDragAndDrop() {
         container.appendChild(draggingElement); // Move the element
         container.classList.remove('highlight');
 
-        // Update backend with new container info
         updateContainer(draggingElement.id, container.id);
       }
     });
@@ -85,7 +82,6 @@ async function createNewTextarea() {
 
     container.appendChild(div);
 
-    // Initialize drag-and-drop for the new textarea
     initializeDragAndDrop();
     deleting();
   } catch (error) {
@@ -93,7 +89,6 @@ async function createNewTextarea() {
   }
 }
 
-// Update container information in the backend
 async function updateContainer(textareaId, newContainerId) {
   const data = { textarea_id: textareaId, new_container: newContainerId };
 
@@ -114,10 +109,10 @@ async function updateContainer(textareaId, newContainerId) {
 }
 
 async function remove_button(event) {
-  const button = event.target; // Get the clicked button
-  const parentDiv = button.parentNode; // Get the parent <div> of the button
-  const id = parentDiv.id; // Get the ID of the parent <div>
-  const data = { id }; // Prepare data for the request
+  const button = event.target;
+  const parentDiv = button.parentNode;
+  const id = parentDiv.id;
+  const data = { id };
 
   try {
     const response = await fetch('/delete_message', {
@@ -128,17 +123,17 @@ async function remove_button(event) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log('Error data:', errorData); // Log the error response
+      console.log('Error data:', errorData);
 
       if (errorData.error === "Message did not delete") {
         console.log("Message not deleting");
-        button.remove(); // Remove the button element if deletion failed
+        button.remove();
       } else {
         throw new Error('Failed to delete message');
       }
     } else {
       console.log('Message deleted successfully:', data);
-      parentDiv.remove(); // Remove the parent <div>, including the textarea and button
+      parentDiv.remove();
       console.log('Div removed:', parentDiv.id);
     }
   } catch (error) {
@@ -146,7 +141,6 @@ async function remove_button(event) {
   }
 }
 
-// Add event listener to all buttons with class 'remove_button'
 function deleting()
 {
     document.querySelectorAll('.remove_button').forEach(button => {
@@ -161,18 +155,17 @@ document.addEventListener('input', debounce(async (e) => {
   const draggableElement = e.target.closest(".draggable");
   const containerElement = e.target.closest(".container");
 
-  // Ensure that both the textarea and the container are valid
   const containerId = containerElement?.id;
   const id = draggableElement?.id;
 
   if (!containerId || !id) {
     console.error("Missing container or message ID");
-    return; // Exit if there's no valid container or draggable element
+    return;
   }
 
   const data = { id, text: newValue, containerId };
 
-  console.log('Sending data:', data); // Log the data being sent
+  console.log('Sending data:', data);
 
   try {
     const response = await fetch('/save-message', {
@@ -183,11 +176,11 @@ document.addEventListener('input', debounce(async (e) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log('Error data:', errorData); // Log the error response
+      console.log('Error data:', errorData);
 
       if (errorData.error === "Message already exists") {
         console.log("Message already exists");
-        e.target.remove(); // Remove the textarea element from the DOM
+        e.target.remove();
       } else {
         throw new Error('Failed to save changes');
       }
@@ -200,11 +193,10 @@ document.addEventListener('input', debounce(async (e) => {
 }, 500));
 
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
   const addInputButton = document.getElementById('add-input-btn');
   addInputButton.addEventListener('click', createNewTextarea);
 
-  initializeDragAndDrop(); // Set up drag-and-drop functionality
+  initializeDragAndDrop();
   deleting();
 });
