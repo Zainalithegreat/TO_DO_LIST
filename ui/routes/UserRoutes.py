@@ -12,6 +12,8 @@ import time
 TIME_LIMIT = 600
 TIME_MINUTES = TIME_LIMIT / 60
 
+
+#Users routes
 class UserRoutes:
     # Retrieve the app instance from WebUI
     __app = WebUI.get_app()
