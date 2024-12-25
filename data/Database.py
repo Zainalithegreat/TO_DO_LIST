@@ -7,7 +7,7 @@ import bcrypt
 # Set up logging configuration (this could be set up elsewhere in your application)
 logging.basicConfig(level=logging.INFO)
 
-
+#Database class for storing, updating, deleteing Users account and do-lists.
 class Database:
     __connection = None
 
