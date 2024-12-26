@@ -7,11 +7,11 @@ import ui.routes
 import os
 import bcrypt
 
+app = Flask(__name__)
 
 class WebUI:
-    __app = Flask(__name__)
 
-    __app.config["SESSION_FILE_DIR"] = "/flask_session"
+    app.config["SESSION_FILE_DIR"] = "/flask_session"
 
     ALLOWED_PATHS = [
         "/",
@@ -36,7 +36,7 @@ class WebUI:
 
     @classmethod
     def get_app(cls):
-        return cls.__app
+        return app
 
     # Determine if a user is logged in
     @classmethod
@@ -46,7 +46,7 @@ class WebUI:
         return None
 
     @staticmethod
-    @__app.before_request
+    @app.before_request
     def before_request():
         """
         Called before each request to check if the user is logged in, if not it redirects to the homepage
@@ -94,10 +94,10 @@ class WebUI:
         UserState.logout(WebUI.get_user_key())
 
     @staticmethod
-    @__app.route('/index')
-    @__app.route('/index.html')
-    @__app.route('/index.php')
-    @__app.route('/')
+    @app.route('/index')
+    @app.route('/index.html')
+    @app.route('/index.php')
+    @app.route('/')
     # render_template(file name): looks up a template in the templates folder
     # Example:
     def homepage():
@@ -110,7 +110,6 @@ class WebUI:
         # causes routes to be added to app object on run
         # pycharm says they are unused (greyed out), but it is incorrect, they are needed
         from ui.routes.UserRoutes import UserRoutes
-
         if "APPDATA" in os.environ:
             path = os.environ["APPDATA"]
         elif "HOME" in os.environ:
@@ -119,11 +118,11 @@ class WebUI:
             raise Exception("Couldn't find config folder.")
 
         # identifies web server session
-        cls.__app.secret_key = bcrypt.gensalt()
+        app.secret_key = bcrypt.gensalt()
         # stores session in session files
-        cls.__app.config["SESSION_TYPE"] = "filesystem"
+        app.config["SESSION_TYPE"] = "filesystem"
         # constructs new session object which handles requests to the flask app
-        Session(cls.__app)
+        Session(app)
         # paths may need to be adjusted, currently placeholders
-        cls.__app.run(debug=True, host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
+        app.run(debug=True, host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
                                                               path + "/234A_CommitChaos/key.pem"))
