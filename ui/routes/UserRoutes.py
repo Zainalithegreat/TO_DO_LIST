@@ -1,5 +1,3 @@
-from numpy.lib.user_array import container
-from requests import Session
 import uuid
 
 from ui.WebUI import WebUI

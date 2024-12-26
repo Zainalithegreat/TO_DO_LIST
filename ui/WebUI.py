@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
-from sqlalchemy.orm.base import state_str
 
 from logic.User import User
 from logic.UserState import UserState
