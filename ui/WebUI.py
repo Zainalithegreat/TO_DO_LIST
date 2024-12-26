@@ -10,6 +10,7 @@ import bcrypt
 
 class WebUI:
     __app = Flask(__name__)
+    __app.secret_key = bcrypt.gensalt().decode('utf-8')
 
     __app.config["SESSION_FILE_DIR"] = "/flask_session"
 
@@ -127,7 +128,6 @@ class WebUI:
                 raise Exception("Couldn't find config folder.")
 
             # Set the secret key (ensure it's unique and random for security)
-            cls.__app.secret_key = bcrypt.gensalt()
 
             # Configure Flask session handling
             cls.__app.config["SESSION_TYPE"] = "filesystem"  # Use filesystem to store session data
