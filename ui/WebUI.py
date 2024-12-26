@@ -105,17 +105,36 @@ class WebUI:
             return redirect((url_for("do_list")))
         return render_template("homepage.html")
 
-    @classmethod
-    def run(cls):
-        # Causes routes to be added to the app object when the application starts
-        from ui.routes.UserRoutes import UserRoutes
+    import os
+    from flask import Flask, session
+    from flask_session import Session
+    import bcrypt
 
-        # Identifies web server session
-        cls.__app.secret_key = bcrypt.gensalt()
-        # Stores session in session files
-        cls.__app.config["SESSION_TYPE"] = "filesystem"
-        # Constructs new session object which handles requests to the Flask app
-        Session(cls.__app)
+    class MyApp:
+        __app = Flask(__name__)
 
-        # WSGI server handles the app startup in PythonAnywhere
-        return cls.__app
+        @classmethod
+        def run(cls):
+            # Import routes after app initialization
+            from ui.routes.UserRoutes import UserRoutes
+
+            # Determine the configuration folder based on environment
+            if "APPDATA" in os.environ:
+                path = os.environ["APPDATA"]
+            elif "HOME" in os.environ:
+                path = os.environ["HOME"]
+            else:
+                raise Exception("Couldn't find config folder.")
+
+            # Set the secret key (ensure it's unique and random for security)
+            cls.__app.secret_key = bcrypt.gensalt()
+
+            # Configure Flask session handling
+            cls.__app.config["SESSION_TYPE"] = "filesystem"  # Use filesystem to store session data
+            Session(cls.__app)  # Initialize session
+
+            # For PythonAnywhere, we don't need to specify SSL context, so we just use:
+            cls.__app.run(debug=True, host="0.0.0.0", port=8080)
+
+    if __name__ == '__main__':
+        MyApp.run()
