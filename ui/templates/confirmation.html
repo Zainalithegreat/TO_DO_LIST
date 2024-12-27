@@ -11,14 +11,6 @@
 {% block content %}
     <div class="content">
         <form method="POST" action="/do_confirmation">
-            {% if time %}
-                <p class="time">You have {{ time }} minutes left</p>
-            {% endif %}
-
-            {% if error %}
-                <p class="error">{{error}}</p>
-            {% endif %}
-
             <table class="data_entry">
                 <tr>
                     <th><label for="confirmation_code">Confirmation Code:</label></th>
