@@ -1,6 +1,7 @@
 import pymssql
 import logging
 import bcrypt
+import json
 
 # Set up logging configuration (this could be set up elsewhere in your application)
 logging.basicConfig(level=logging.INFO)
@@ -13,10 +14,14 @@ class Database:
     def connect(cls):
         # the connection variables
         if cls.__connection is None:
+            with open("db_config.json", "r") as config_file:
+                config = json.load(config_file)
             try:
                 cls.__connection = pymssql.connect(
-                    server="localhost",
-                    database="List"
+                    server=config["server"],
+                    database=config["database"],
+                    user=config["user"],
+                    password=config["password"]
                 )
                 print(cls.__connection)
             except pymssql.DatabaseError as e:
