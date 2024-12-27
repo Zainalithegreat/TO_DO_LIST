@@ -13,6 +13,19 @@ class User:
         self.__username = username
         self.__password = password
 
+    def to_dict(self):
+        """Converts the User instance to a dictionary for session storage."""
+        return {
+            "username": self.__username,
+            "password": self.__password,  # Avoid storing plaintext passwords!
+            # Add other fields as necessary (e.g., name, email)
+        }
+
+    @staticmethod
+    def from_dict(data):
+        """Reconstructs a User instance from a dictionary."""
+        return User(username=data["username"], password=data.get("password"))
+
     def get_user_id(self):
         user_id = Database.get_user_id(self.__username)
         print("Hello World")
@@ -105,6 +118,22 @@ class User:
 
     def set_email(self, email):
         self.__Email = email
+
+    @staticmethod
+    def get_userid_email(email):
+        from data.Database import Database
+
+        return Database.get_userid_email(email)
+
+    @staticmethod
+    def update_password(hashed_password, user_id):
+        """
+        Updates a user's password in the database. Only reached after login and confirmation code
+        """
+        print(user_id)
+        from data.Database import Database
+
+        return Database.update_password(hashed_password, user_id)
 
 
 

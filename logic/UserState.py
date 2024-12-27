@@ -1,3 +1,6 @@
+from flask import session
+
+
 class UserState:
     __user = None
     __map = {}
@@ -17,7 +20,7 @@ class UserState:
             del cls.__map[user_key]
 
     def get_key(self):
-        return self.__user.get_user_key()
+        return session["user"]["username"].lower
 
     @classmethod
     def lookup(cls, key):

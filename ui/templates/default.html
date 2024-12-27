@@ -9,7 +9,7 @@
 <div class="user">
 {% if "user" in session %}
     <div class="top_login_button"> <a href="/logout">Logout</a></div>
-    <div class="top_login_name">User: {{ session["user"].get_username() if "user" in session }}</div>
+    <div class="top_login_name">User: {{ session["user"]["username"] if "user" in session }}</div>
      <script src="static/script.js" defer></script>
 </div>
 {% endif  %}

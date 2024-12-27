@@ -1,7 +1,8 @@
+import json
+
 import pymssql
 import logging
 import bcrypt
-import json
 
 # Set up logging configuration (this could be set up elsewhere in your application)
 logging.basicConfig(level=logging.INFO)
@@ -14,9 +15,10 @@ class Database:
     def connect(cls):
         # the connection variables
         if cls.__connection is None:
-            with open("db_config.json", "r") as config_file:
-                config = json.load(config_file)
             try:
+                with open("db_config.json", "r") as config_file:
+                    config = json.load(config_file)
+
                 cls.__connection = pymssql.connect(
                     server=config["server"],
                     database=config["database"],
@@ -346,3 +348,35 @@ class Database:
         print("Message Deleted")
         return True
 
+    @classmethod
+    def get_userid_email(cls, email):
+        sql = """
+                        SELECT UserID
+                        FROM Users 
+                        WHERE Email = %s
+                    """
+
+        cursor = cls.get_cursor()
+        cursor.execute(sql, (email,))
+        result = cursor.fetchall()
+        return result
+
+    @classmethod
+    def update_password(cls, hashed_password, user_id):
+        """
+        Updates the password of the user
+        :param hashed_password: bytes - Hashed and salted password
+        """
+        sql = """
+            UPDATE Users
+            SET Password = %s
+            WHERE UserID = %s
+            """
+        cursor = cls.get_cursor()
+
+        cursor.execute(sql, (hashed_password, user_id))
+        cls.__connection.commit()
+        if cursor:
+            cursor.close()
+        cls.close_connection()
+        print("Password updated")

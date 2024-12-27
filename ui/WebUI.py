@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
+from sqlalchemy.orm.base import state_str
 
 from logic.User import User
 from logic.UserState import UserState
@@ -10,7 +11,6 @@ import bcrypt
 
 class WebUI:
     __app = Flask(__name__)
-    __app.secret_key = os.urandom(24)
 
     __app.config["SESSION_FILE_DIR"] = "/flask_session"
 
@@ -24,20 +24,27 @@ class WebUI:
         "/static/web_ui.css",
         "/register",
         "/do_register",
-        "/do_confirmation"
+        "/username",
+        "/user_do_reset_password",
+        "/do_reset_password",
+        "/reset_password",
+        "/do_confirmation",
+        "/save-message",
+        "/get-new-message-id",
+        "/delete_message"
+
     ]
 
     @classmethod
     def get_app(cls):
         return cls.__app
 
-    # Determine if a user is logged in
     @classmethod
     def get_user(cls):
         if "user" in session:
-            return session["user"]
+            # Ensuring session["user"] is a dictionary
+            return User.from_dict(session["user"])
         return None
-
     @staticmethod
     @__app.before_request
     def before_request():
@@ -76,7 +83,7 @@ class WebUI:
         """
         logs in the passed-in user
         """
-        session["user"] = user
+        Session["user"] = user
         UserState(user)
 
     @classmethod
@@ -98,35 +105,25 @@ class WebUI:
             return redirect((url_for("do_list")))
         return render_template("homepage.html")
 
-    import os
-    from flask import Flask, session
-    from flask_session import Session
-    import bcrypt
+    @classmethod
+    def run(cls):
+        # causes routes to be added to app object on run
+        # pycharm says they are unused (greyed out), but it is incorrect, they are needed
+        from ui.routes.UserRoutes import UserRoutes
 
-    class MyApp:
-        __app = Flask(__name__)
+        if "APPDATA" in os.environ:
+            path = os.environ["APPDATA"]
+        elif "HOME" in os.environ:
+            path = os.environ["HOME"]
+        else:
+            raise Exception("Couldn't find config folder.")
 
-        @classmethod
-        def run(cls):
-            # Import routes after app initialization
-            from ui.routes.UserRoutes import UserRoutes
-
-            # Determine the configuration folder based on environment
-            if "APPDATA" in os.environ:
-                path = os.environ["APPDATA"]
-            elif "HOME" in os.environ:
-                path = os.environ["HOME"]
-            else:
-                raise Exception("Couldn't find config folder.")
-
-            # Set the secret key (ensure it's unique and random for security)
-
-            # Configure Flask session handling
-            cls.__app.config["SESSION_TYPE"] = "filesystem"  # Use filesystem to store session data
-            Session(cls.__app)  # Initialize session
-
-            # For PythonAnywhere, we don't need to specify SSL context, so we just use:
-            cls.__app.run(debug=True, host="0.0.0.0", port=8080)
-
-    if __name__ == '__main__':
-        MyApp.run()
+        # identifies web server session
+        cls.__app.secret_key = bcrypt.gensalt()
+        # stores session in session files
+        cls.__app.config["SESSION_TYPE"] = "filesystem"
+        # constructs new session object which handles requests to the flask app
+        Session(cls.__app)
+        # paths may need to be adjusted, currently placeholders
+        cls.__app.run(debug=True, host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
+                                                              path + "/234A_CommitChaos/key.pem"))
