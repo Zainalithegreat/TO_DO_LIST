@@ -82,7 +82,7 @@ footer a:hover {
     color: #007BFF;
 }
 
-@media screen and (min-width: 375px){
+@media screen and (min-width: 375px) {
     body {
         display: flex;
         flex-direction: column;
@@ -90,7 +90,15 @@ footer a:hover {
         min-height: 100vh;
         height: 100vh; /* Full viewport height */
         margin: 0;
-        overflow: hidden;
+        overflow: auto; /* Allow scrolling */
+    }
+
+    header {
+        padding: 0.5rem;
+        text-align: center;
+        background-color: #007BFF;
+        color: white;
+        flex-shrink: 0; /* Prevent the header from shrinking */
     }
 
     .main-container {
@@ -101,9 +109,9 @@ footer a:hover {
         align-items: center; /* Center items horizontally */
         padding: 10px; /* Reduced padding */
         height: calc(100vh - 120px); /* Subtract header/footer height */
-        overflow-y: auto; /* Allow scrolling */
-
+        overflow-y: auto; /* Allow scrolling within the container */
     }
+
     .to_do_list {
         text-align: center;
         font-size: 2em;
@@ -120,18 +128,13 @@ footer a:hover {
         overflow-y: auto; /* Allow scrolling within the container */
         position: relative;
     }
-    .container h2{
+
+    .container h2 {
         font-size: 2em;
     }
-    .draggable{
-         border: 50px solid lightskyblue;
-    }
 
-    header {
-        padding: 0.5rem;
-        text-align: center;
-        background-color: #007BFF;
-        color: white;
+    .draggable {
+        border: 50px solid lightskyblue;
     }
 
     #footer {
@@ -139,6 +142,8 @@ footer a:hover {
         text-align: center;
         font-size: 1.5rem;
         border-top: 1px solid #ddd;
+        padding: 1rem; /* Added padding to footer */
+        flex-shrink: 0; /* Prevent footer from shrinking */
     }
 
     textarea {
