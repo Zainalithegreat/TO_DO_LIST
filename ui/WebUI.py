@@ -107,23 +107,16 @@ class WebUI:
 
     @classmethod
     def run(cls):
-        # causes routes to be added to app object on run
-        # pycharm says they are unused (greyed out), but it is incorrect, they are needed
+        # Import routes after app initialization
         from ui.routes.UserRoutes import UserRoutes
 
-        if "APPDATA" in os.environ:
-            path = os.environ["APPDATA"]
-        elif "HOME" in os.environ:
-            path = os.environ["HOME"]
-        else:
-            raise Exception("Couldn't find config folder.")
-
-        # identifies web server session
+        # Set up session handling and Flask secret key
         cls.__app.secret_key = bcrypt.gensalt()
-        # stores session in session files
         cls.__app.config["SESSION_TYPE"] = "filesystem"
-        # constructs new session object which handles requests to the flask app
         Session(cls.__app)
-        # paths may need to be adjusted, currently placeholders
-        cls.__app.run(debug=True, host="0.0.0.0", port=8444, ssl_context=(path + "/234A_CommitChaos/cert.pem",
-                                                              path + "/234A_CommitChaos/key.pem"))
+
+        # For local development, include SSL context and debugging
+        if os.getenv("PYTHONANYWHERE_DOMAIN") is None:
+            cls.__app.run(debug=True, host="0.0.0.0", port=8444)
+        else:
+            print("Running on PythonAnywhere - Use the WSGI server.")
