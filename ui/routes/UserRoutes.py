@@ -303,7 +303,7 @@ class UserRoutes:
     @__app.route('/save-message', methods=['POST'])
     def save_message():
         import time
-        time.sleep(1)
+        time.sleep(1)  # Simulating delay for testing
 
         try:
             # Extract and validate incoming JSON data
@@ -318,6 +318,7 @@ class UserRoutes:
                 print("Missing fields:", data)  # Log missing fields
                 return jsonify({"error": "Missing required fields"}), 400
 
+            # Determine the check value based on container_id
             container_checks = {
                 "container-1": 1,
                 "container-2": 2,
@@ -328,7 +329,9 @@ class UserRoutes:
                 return jsonify({"error": "Invalid container ID"}), 400
 
             print("Received data:", data)
+            time.sleep(1)
 
+            # Fetch user ID from the session
             user_instance = User(session["user"].get_username())
             user_id = user_instance.get_user_id()
 
@@ -337,6 +340,7 @@ class UserRoutes:
                 Database.update_message_box(text, message_id, user_id)
                 return jsonify({"message": "Saved successfully"}), 200
 
+            # Save the message in the database
             success = Database.save_message(text, user_id[0], check, message_id)
             if success:
                 print("Message saved successfully")
@@ -389,6 +393,7 @@ class UserRoutes:
     @__app.route('/get-new-message-id', methods=['GET'])
     def get_new_message_id():
         try:
+            # Get the current maximum message ID from the database
             new_message_id = str(uuid.uuid4())
             print("Message_ID", new_message_id)
 
@@ -397,19 +402,27 @@ class UserRoutes:
             print(f"Unexpected error: {e}")
             return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+    from flask import request, jsonify
 
     @staticmethod
     @__app.route("/delete_message", methods=["POST"])
     def delete_message():
         try:
+            # Parse the incoming JSON request
             data = request.json
             id = data.get("id")
 
+            # Debugging: Print the ID to the console
             print("Id:", id)
 
+            # Validate that the ID is provided
             if not id:
                 return jsonify({"error": "Message ID is required"}), 400
+
+            # Perform the deletion using the Database helper
             success = Database.delete_message(id)
+
+            # Check if deletion was successful
             if success:
                 print("success")
                 return jsonify({"message": "Message deleted successfully"}), 200
@@ -418,6 +431,7 @@ class UserRoutes:
                 return jsonify({"error": "Message did not delete"}), 500
 
         except Exception as e:
+            # Catch and log unexpected errors
             print("Error during message deletion:", str(e))
             return jsonify({"error": "Internal server error"}), 500
 

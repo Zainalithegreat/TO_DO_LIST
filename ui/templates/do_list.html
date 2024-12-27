@@ -6,8 +6,8 @@
     DL
 {% endblock %}
 {% block content %}
-<h1 class="to_do_list">TO-DO LIST</h1>
 <div class="main-container">
+    <!-- Container 1: Start -->
     <div class="container" id="container-1">
         <h2>Start</h2>
         {% for message in container_one %}
@@ -19,6 +19,7 @@
         <button id="add-input-btn">Add Input</button>
     </div>
 
+    <!-- Container 2: In Progress -->
     <div class="container" id="container-2">
         <h2>In Progress</h2>
          {% for message in container_two %}
@@ -29,6 +30,7 @@
         {% endfor %}
     </div>
 
+    <!-- Container 3: Complete -->
     <div class="container" id="container-3">
         <h2>Complete</h2>
          {% for message in container_three %}
