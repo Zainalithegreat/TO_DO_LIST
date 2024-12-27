@@ -255,8 +255,8 @@ class UserRoutes:
 
             # Load user and their data
             user = User.fetch_user_object(session.get('user_id'))
-            session['user'] = {"username": user.get_username(), "password": user.get_password}
-
+            session['user'] = {"username": user.get_username(), "password": user.get_password()}
+            print(session["user"])
             user_instance = User(session["user"]["username"])
             user_id = user_instance.get_user_id()
             container_one = Database.get_messages(user_id, 1)
