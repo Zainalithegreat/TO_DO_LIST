@@ -112,10 +112,10 @@ footer a:hover {
         overflow-y: auto; /* Allow scrolling within the container */
     }
     .top_login_name {
-        font-size: 30px;
+        font-size: 50px;
     }
     .top_login_button {
-        font-size: 30px;
+        font-size: 50px;
     }
 
     .to_do_list {
@@ -171,7 +171,7 @@ footer a:hover {
         top: 0.5rem;
         background-color: #007BFF;
         color: #fff;
-        font-size: 30px;
+        font-size: 40px;
     }
 
     #add-input-btn:hover {
@@ -185,9 +185,9 @@ footer a:hover {
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        width: 7rem;
-        height: 3rem;
-        font-size: 20px;
+        width: 10rem;
+        height: 5rem;
+        font-size: 30px;
     }
 }
 
