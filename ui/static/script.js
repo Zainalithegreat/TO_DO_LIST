@@ -79,7 +79,6 @@ async function createNewTextarea() {
       textarea.style.fontSize = '70px'; // Increase font size on mobile devices
     }
 
-    textarea.style.fontSize = '20px';
     // Auto-resize height based on content
     textarea.style.overflow = 'hidden';
     textarea.addEventListener('input', () => {
