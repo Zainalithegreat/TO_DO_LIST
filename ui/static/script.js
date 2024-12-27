@@ -76,7 +76,7 @@ async function createNewTextarea() {
     div.appendChild(textarea)
     div.appendChild(button)
     if (window.innerWidth <= 768) {
-      textarea.style.fontSize = '50px'; // Increase font size on mobile devices
+      textarea.style.fontSize = '70px'; // Increase font size on mobile devices
     }
 
     textarea.style.fontSize = '20px';
