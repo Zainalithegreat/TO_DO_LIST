@@ -167,11 +167,11 @@ footer a:hover {
         cursor: pointer;
         transition: background-color 0.3s;
         position: absolute;
-        right: 10px;
+        right: 15px;
         top: 0.5rem;
         background-color: #007BFF;
         color: #fff;
-        font-size: 40px;
+        font-size: 35px;
     }
 
     #add-input-btn:hover {
@@ -185,9 +185,9 @@ footer a:hover {
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        width: 10rem;
-        height: 5rem;
-        font-size: 30px;
+        width: 8rem;
+        height: 3rem;
+        font-size: 25px;
     }
 }
 
