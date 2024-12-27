@@ -76,6 +76,7 @@ async function createNewTextarea() {
     div.appendChild(textarea)
     div.appendChild(button)
 
+    textarea.style.fontSize = '20px';
     // Auto-resize height based on content
     textarea.style.overflow = 'hidden';
     textarea.addEventListener('input', () => {

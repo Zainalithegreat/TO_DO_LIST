@@ -111,6 +111,12 @@ footer a:hover {
         height: calc(100vh - 120px); /* Subtract header/footer height */
         overflow-y: auto; /* Allow scrolling within the container */
     }
+    .top_login_name {
+        font-size: 30px;
+    }
+    .top_login_button {
+        font-size: 30px;
+    }
 
     .to_do_list {
         text-align: center;
@@ -151,6 +157,7 @@ footer a:hover {
         height: 80px; /* Reduced height */
         margin-bottom: 8px;
         resize: none;
+        font-size: 20px;
     }
 
     #add-input-btn {
@@ -164,6 +171,7 @@ footer a:hover {
         top: 0.5rem;
         background-color: #007BFF;
         color: #fff;
+        font-size: 30px;
     }
 
     #add-input-btn:hover {
@@ -177,6 +185,9 @@ footer a:hover {
         border: none;
         border-radius: 3px;
         cursor: pointer;
+        width: 7rem;
+        height: 3rem;
+        font-size: 20px;
     }
 }
 
@@ -196,11 +207,6 @@ footer a:hover {
         overflow: hidden;
     }
 
-    .top_login_name {
-        font-weight: bold;
-        color: black;
-    }
-
     .main-container {
         flex-direction: row;
         height: 100%
@@ -218,6 +224,9 @@ footer a:hover {
         padding: 1rem;
         text-align: center;
     }
+    .top_login_button {
+        font-size: 20px;
+    }
     .top_login_button a {
         color: #fff;
         text-decoration: none;
@@ -226,8 +235,10 @@ footer a:hover {
         border-radius: 5px;
         transition: background-color 0.3s;
     }
+
     .top_login_name {
         margin-top: 0.5rem;
+        font-size: 20px;
     }
     .container {
         padding: 1.5rem;
@@ -243,6 +254,7 @@ footer a:hover {
       height: 100px; /* Set a fixed height */
       margin-bottom: 10px; /* Space between textareas */
       resize: none; /* Optional: Prevent resizing by the user */
+      font-size: 20px;
     }
     .container h2 {
         margin-bottom: 1rem;
@@ -272,6 +284,7 @@ footer a:hover {
         top: 0.5rem;
         background-color: #007BFF;
         color: #fff;
+        font-size: 15px;
     }
     #footer {
         text-align: center;
@@ -289,6 +302,9 @@ footer a:hover {
         border: none;
         border-radius: 3px;
         cursor: pointer;
+        width: 4rem;
+        height: 2rem;
+        font-size: 12px;
     }
     .to_do_list{
         text-align: center;
