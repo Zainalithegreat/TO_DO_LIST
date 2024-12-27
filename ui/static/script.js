@@ -79,6 +79,15 @@ async function createNewTextarea() {
       textarea.style.fontSize = '70px'; // Increase font size on mobile devices
     }
 
+     textarea.addEventListener('input', function handleFirstInput() {
+      if (window.innerWidth <= 768) {
+        textarea.style.height = '50px'; // Set height to 50px on mobile
+      }
+
+      // Remove the listener to avoid resetting the height
+      textarea.removeEventListener('input', handleFirstInput);
+    });
+
     // Auto-resize height based on content
     textarea.style.overflow = 'hidden';
     textarea.addEventListener('input', () => {
