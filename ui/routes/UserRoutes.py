@@ -247,6 +247,7 @@ class UserRoutes:
                     message_body="Username or Email already exists.",
                     logreg="login"
                 )
+
         elif session.get("action") == "reset":
             return render_template("reset_password.html")
         else:
@@ -257,18 +258,7 @@ class UserRoutes:
             user = User.fetch_user_object(session.get('user_id'))
             session['user'] = {"username": user.get_username(), "password": user.get_password()}
             print(session["user"])
-            user_instance = User(session["user"]["username"])
-            user_id = user_instance.get_user_id()
-            container_one = Database.get_messages(user_id, 1)
-            container_two = Database.get_messages(user_id, 2)
-            container_three = Database.get_messages(user_id, 3)
-
-            return render_template(
-                "do_list.html",
-                container_one=container_one,
-                container_two=container_two,
-                container_three=container_three
-            )
+            return redirect(url_for("before_list"))
 
     @staticmethod
     @__app.route("/logout")
@@ -281,6 +271,23 @@ class UserRoutes:
             WebUI.logout()
             del session["user"]
         return redirect(url_for("login"))
+
+    @staticmethod
+    @__app.route("/before_list")
+    def before_list():
+        user_instance = User(session["user"]["username"])
+        user_id = user_instance.get_user_id()
+        container_one = Database.get_messages(user_id, 1)
+        container_two = Database.get_messages(user_id, 2)
+        container_three = Database.get_messages(user_id, 3)
+
+        return render_template(
+            "do_list.html",
+            container_one=container_one,
+            container_two=container_two,
+            container_three=container_three
+        )
+
 
     @staticmethod
     @__app.route("/do_list")
