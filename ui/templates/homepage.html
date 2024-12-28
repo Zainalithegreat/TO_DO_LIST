@@ -6,9 +6,11 @@
     DL
 {% endblock %}
 {% block content %}
-    <p>Create an account to make a do list. </p>
-    <p>Already subscribed? Log in to change your do list.</p>
-<form method="GET" action="/login">
-    <button type="submit">Enter</button>
-</form>
+    <div class="form-container">
+        <form method="GET" action="/login">
+            <p>Create an account to make a do list. </p>
+            <p>Already subscribed? Log in to change your do list.</p>
+            <button type="submit" class="main-button">Enter</button>
+        </form>
+    </div>
 {% endblock %}

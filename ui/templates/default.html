@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/web_ui.css">
     <title>{% block title %}Default Title{% endblock %}</title>
 </head>
 <body>
-<div class="user">
+{% if "user" not in session %}
+<div id="for-color">
+
+</div>
+{% endif  %}
 {% if "user" in session %}
+<div class="user">
     <div class="top_login_button"> <a href="/logout">Logout</a></div>
     <div class="top_login_name">User: {{ session["user"]["username"] if "user" in session }}</div>
      <script src="static/script.js" defer></script>
@@ -19,8 +25,8 @@
 {% block footer %}
 
 <div id="footer">
-    <a href="/">234A_CommitChaos</a> covered under  <a href="https://creativecommons.org/licenses/by/4.0/deed.en">CC BY 4.0 DEED</a><br>
-    Contact CommitChaos with questions.
+    <a href="/">TO-DO List</a> covered under  <a href="https://creativecommons.org/licenses/by/4.0/deed.en">CC BY 4.0 DEED</a><br>
+    Contact zainsbussinessemail@gmail.com for more questions.
 </div>
 {% endblock %}
 </body>

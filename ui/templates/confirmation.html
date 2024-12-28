@@ -9,28 +9,27 @@
 {% endblock %}
 
 {% block content %}
-    <div class="content">
-        <form method="POST" action="/do_confirmation">
+<div class="content">
+    <div class="form-container">
+        <form method="POST" action="/do_confirmation" class="data-entry-form">
             {% if time %}
                 <p class="time">You have {{ time }} minutes left</p>
             {% endif %}
 
             {% if error %}
-                <p class="error">{{error}}</p>
+                <p class="error">{{ error }}</p>
             {% endif %}
 
-            <table class="data_entry">
-                <tr>
-                    <th><label for="confirmation_code">Confirmation Code:</label></th>
-                    <td><input type="text" name="confirmation_code" id="confirmation_code" required></td>
-                </tr>
-                <tr>
-                    <th colspan="2"><button type="submit" name="type" value="confirm">Submit</button></th>
-                </tr>
-                <tr>
-                    <th colspan="2"><a href="/login"><button type="button">Back to Login</button></a></th>
-                </tr>
-            </table>
+            <div class="form-group">
+                <label for="confirmation_code">Confirmation Code:</label>
+                <input type="text" name="confirmation_code" id="confirmation_code" placeholder="Enter your code" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" name="type" value="confirm" class="main-button">Submit</button>
+                <a href="/login" class="button-link ">Back to Login</a>
+            </div>
         </form>
     </div>
+</div>
 {% endblock %}

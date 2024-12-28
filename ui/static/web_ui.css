@@ -29,60 +29,46 @@ header {
     color: black;
 }
 
-
-.container {
-  background: #fff;
-}
-
-
-.container h2 {
-    color: #007BFF;
-}
-
-#add-input-btn {
-    background-color: #007BFF;
-    color: #fff;
-}
-
-#add-input-btn:hover {
-    background-color: #0056b3;
-}
-
-#footer {
-    background-color: #f1f1f1;
-}
-
-#footer a {
-    color: #007BFF;
-}
-
-footer a:hover {
-    color: #0056b3;
-}
-
-.user{
+.user {
     background: dodgerblue;
 }
 
-.remove_button{
-    background: #f44336;
-    color: #fff;
+#for-color{
+    width: 100%;
+    height: 65px;
+    background: dodgerblue;
 }
-.error{
-    font-weight: bold;
+
+.container {
+    background: #fff;
+    padding: 1rem;
+    width: 100%;
+    height: 100%;
+    border: 10px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto;
+}
+
+
+.time, .error{
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.error {
     color: red;
 }
 
-.time{
-    font-weight: bold;
-    color: green;
-}
-
-.to_do_list{
+.to_do_list {
     color: #007BFF;
 }
 
-@media screen and (min-width: 375px) {
+/* Media Queries */
+
+@media screen and (min-width: 300px) {
     body {
         display: flex;
         flex-direction: column;
@@ -92,40 +78,51 @@ footer a:hover {
         margin: 0;
         overflow: auto; /* Allow scrolling */
     }
-
-    header {
-        padding: 0.5rem;
+    .to_do_list{
         text-align: center;
-        background-color: #007BFF;
-        color: white;
-        flex-shrink: 0; /* Prevent the header from shrinking */
+        font-size: 25px;
+    }
+
+    .user {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        height: 65px;
+    }
+
+    .top_login_name {
+        color: black;
+    }
+
+    .top_login_button {
+        color: black;
+        text-decoration: none;
+    }
+
+    textarea {
+        width: 100%;
+        height: 50px; /* Reduced height */
+        resize: none;
+        font-size: 20px;
+    }
+
+    .top_login_button{
+        margin-right: 100px;
     }
 
     .main-container {
-        flex-grow: 1;
         display: flex;
         flex-direction: column; /* Stack items vertically */
         justify-content: flex-start;
         align-items: center; /* Center items horizontally */
-        padding: 10px; /* Reduced padding */
-        height: calc(100vh - 120px); /* Subtract header/footer height */
+        height: calc(100vh - 100px - 85px); /* Subtract header/footer height */
         overflow-y: auto; /* Allow scrolling within the container */
-    }
-    .top_login_name {
-        font-size: 50px;
-    }
-    .top_login_button {
-        font-size: 50px;
-    }
-
-    .to_do_list {
-        text-align: center;
-        font-size: 2em;
     }
 
     .container {
         width: 100%; /* Full width */
-        height: 100%; /* Prevent overflowing */
+        max-height: calc(100vh - 100px - 85px);
         border: 10px solid #ddd;
         border-radius: 8px;
         background: #fff;
@@ -136,31 +133,111 @@ footer a:hover {
     }
 
     .container h2 {
-        font-size: 2em;
+        color: #007BFF;
+        font-size: 1.5rem;
     }
 
-    .draggable {
-        border: 50px solid lightskyblue;
+    .top_login_name, .top_login_button, .form-group label {
+        font-size: 30px;
+    }
+
+    .form-group input {
+        font-size: 40px;
+    }
+
+    .button-link {
+        font-size: 50px;
+    }
+
+   .form-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .data-entry-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 15px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .main-button {
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .button-link {
+        text-align: center;
+        padding: 10px;
+        font-size: 1rem;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .button-link:hover {
+        background-color: #5a6268;
     }
 
     #footer {
-        background-color: #f1f1f1;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 0.9rem;
         border-top: 1px solid #ddd;
-        padding: 1rem; /* Added padding to footer */
-        flex-shrink: 0; /* Prevent footer from shrinking */
-    }
-
-    textarea {
+        position: fixed;
+        bottom: 0;
+        left: 0;
         width: 100%;
-        height: 80px; /* Reduced height */
-        margin-bottom: 8px;
-        resize: none;
-        font-size: 20px;
+        height: 75px;
+        background-color: #f9f9f9;
+        padding: 5px;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    #add-input-btn {
+    .draggable {
+        border: 10px solid lightskyblue;
+    }
+
+     #add-input-btn {
         padding: 0.4rem 0.8rem;
         border: none;
         border-radius: 5px;
@@ -168,10 +245,10 @@ footer a:hover {
         transition: background-color 0.3s;
         position: absolute;
         right: 15px;
-        top: 0.5rem;
+        top: 1rem;
         background-color: #007BFF;
         color: #fff;
-        font-size: 35px;
+        font-size: 20px;
     }
 
     #add-input-btn:hover {
@@ -185,118 +262,129 @@ footer a:hover {
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        width: 8rem;
-        height: 3rem;
-        font-size: 25px;
+        width: 6rem;
+        height: 2rem;
+        font-size: 15px;
     }
 }
 
-
 @media screen and (min-width: 990px), print {
     html, body {
-        height: 100%; /* Ensure the page takes up the full height */
-        margin: 0; /* Remove default margins */
-        overflow: hidden; /* Disable scrolling on the page */
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
     }
+
     body {
         display: flex;
         flex-direction: column;
         line-height: 1.6;
         min-height: 100vh;
-        margin: 0;
-        overflow: hidden;
     }
 
     .main-container {
+        display: flex;
+        justify-content: center; /* Centers horizontally */
+        align-items: center;   /* Centers vertically */
         flex-direction: row;
-        height: 100%
+        height: calc(100vh - 100px - 85px);        /* Makes the container take the full viewport height */
+        margin-bottom: 0;      /* Removes unnecessary bottom margin */
     }
 
     .container {
-        width: 30%; /* Adjust container width */
+        max-height: calc(100vh - 100px - 85px);
+        width: 30%;
         border: 1px solid #ddd;
         border-radius: 8px;
         background: #fff;
         padding: 1.5rem;
     }
 
-    header {
-        padding: 1rem;
-        text-align: center;
-    }
-    .top_login_button {
-        font-size: 20px;
-    }
-    .top_login_button a {
-        color: #fff;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        background-color: black;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
 
-    .top_login_name {
-        margin-top: 0.5rem;
-        font-size: 20px;
-    }
-    .container {
-        padding: 1.5rem;
+   .form-container {
         width: 100%;
-        height: 700px; /* Adjust based on your desired height */
-        overflow-y: auto; /* Enables vertical scrolling */
+        max-width: 400px;
+        padding: 20px;
+        background: white;
         border: 1px solid #ddd;
-        justify-content: flex-start;
-        position: relative;
-    }
-    textarea {
-      width: 100%;
-      height: 100px; /* Set a fixed height */
-      margin-bottom: 10px; /* Space between textareas */
-      resize: none; /* Optional: Prevent resizing by the user */
-      font-size: 20px;
-    }
-    .container h2 {
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-    }
-    .draggable {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-        border: 10px solid lightskyblue;
-        border-radius: 4px;
-        transition: box-shadow 0.3s;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
-    .draggable:focus {
-        outline: none;
-        box-shadow: 0 0 5px #007BFF;
+    .data-entry-form {
+        display: flex;
+        flex-direction: column;
     }
-    #add-input-btn {
-        padding: 0.4rem 0.8rem;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        position: absolute;
-        right: 10px;
-        top: 0.5rem;
-        background-color: #007BFF;
-        color: #fff;
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
         font-size: 15px;
     }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .main-button {
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .button-link {
+        text-align: center;
+        padding: 10px;
+        font-size: 1rem;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .button-link:hover {
+        background-color: #5a6268;
+    }
+
     #footer {
         text-align: center;
         font-size: 0.9rem;
         border-top: 1px solid #ddd;
-    }
-    #footer a {
-        text-decoration: none;
-        transition: color 0.3s;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f9f9f9;
+        padding: 10px;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .remove_button{
+    .remove_button {
         margin-top: 10px;
         padding: 5px 10px;
         border: none;
@@ -306,16 +394,11 @@ footer a:hover {
         height: 2rem;
         font-size: 12px;
     }
-    .to_do_list{
-        text-align: center;
-        font-weight: bold;
-        margin-top: 20px;
-    }
 
     #back_to_login {
         padding: 5px;
-        margin: 0;
-        margin-left: 120px; /* Adjust this value to control the distance */
-        display: inline-block; /* Ensures the buttons stay in line */
+        margin-left: 120px;
+        display: inline-block;
     }
 }
+

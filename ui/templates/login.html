@@ -7,44 +7,25 @@
 {% endblock %}
 {% block content %}
     <div class="content">
-        <p>Please enter the information for your account below</p>
-        {% if error_message %}
-            <div class="error">{{ error_message }}</div>
-        {% endif %}
-        <form method="POST" action="/do_login">
-            <table class="data_entry">
-                <tr>
-                    <th><label>Username:</label></th>
-                    <td>
-                        <input type="text" name="username" value="{{ username or '' }}">
-                    </td>
-                </tr>
-                <tr>
-                    <th><label>Password:</label></th>
-                    <td>
-                        <input type="password" name="password">
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        <button type="submit" name="type" value="login">LOGIN</button>
-                    </th>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        <a href="/register">
-                            <button type="button">REGISTER</button>
-                        </a>
-                    </th>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        <a href="/reset_password">
-                            <button type="button">Reset Password</button>
-                        </a>
-                    </th>
-                </tr>
-            </table>
-        </form>
+        <div class="form-container">
+            {% if error_message %}
+                <div class="error">{{ error_message }}</div>
+            {% endif %}
+            <form method="POST" action="/do_login" class="data-entry-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ username or '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" name="type" value="login" class="main-button">LOGIN</button>
+                    <a href="/register" class="button-link">REGISTER</a>
+                    <a href="/reset_password" class="button-link">Reset Password</a>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}
