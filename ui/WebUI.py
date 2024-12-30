@@ -10,7 +10,7 @@ import bcrypt
 
 
 class WebUI:
-    __app = Flask(__name__)
+    __app = Flask(__name__, static_folder='static')
     __app.secret_key = os.urandom(24)
 
     __app.config["SESSION_FILE_DIR"] = "/flask_session"
